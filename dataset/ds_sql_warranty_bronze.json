@@ -1,0 +1,36 @@
+{
+	"name": "ds_sql_warranty_bronze",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_ucb_apple_12400475",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Bronze"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "claim_id",
+				"type": "varchar"
+			},
+			{
+				"name": "claim_date",
+				"type": "varchar"
+			},
+			{
+				"name": "sale_id",
+				"type": "varchar"
+			},
+			{
+				"name": "repair_status",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "bronze",
+			"table": "warranty"
+		}
+	}
+}
