@@ -27,6 +27,10 @@
 			{
 				"name": "repair_status",
 				"type": "varchar"
+			},
+			{
+				"name": "sale_id",
+				"type": "varchar"
 			}
 		],
 		"typeProperties": {

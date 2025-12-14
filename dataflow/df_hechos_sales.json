@@ -30,10 +30,10 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ds_sql_warranty_silver",
+						"referenceName": "ds_sql_dim_warranty",
 						"type": "DatasetReference"
 					},
-					"name": "source2"
+					"name": "warranty"
 				}
 			],
 			"sinks": [],
@@ -87,15 +87,16 @@
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> products",
 				"source(output(",
+				"          warranty_sk as integer,",
 				"          claim_id as string,",
 				"          claim_date as date,",
-				"          sale_id as string,",
-				"          repair_status as string",
+				"          repair_status as string,",
+				"          sale_id as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> source2",
+				"     format: 'table') ~> warranty",
 				"source1, stores join(source1@store_id == stores@store_id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
@@ -106,7 +107,7 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
-				"join2, source2 join(source1@sale_id == source2@sale_id,",
+				"join2, warranty join(source1@sale_id == ERROR_FUNCTION(''),",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",

@@ -42,7 +42,8 @@
 				"          warranty_sk as integer,",
 				"          claim_id as string,",
 				"          claim_date as date,",
-				"          repair_status as string",
+				"          repair_status as string,",
+				"          sale_id as string",
 				"     ),",
 				"     deletable:false,",
 				"     insertable:true,",
@@ -55,7 +56,8 @@
 				"     mapColumn(",
 				"          claim_id,",
 				"          claim_date,",
-				"          repair_status",
+				"          repair_status,",
+				"          sale_id",
 				"     )) ~> sink1"
 			]
 		}
