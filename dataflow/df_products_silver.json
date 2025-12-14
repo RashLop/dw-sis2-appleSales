@@ -1,0 +1,94 @@
+{
+	"name": "df_products_silver",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_products_bronze",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_products_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "cast1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          product_id as string,",
+				"          product_name as string,",
+				"          category_id as string,",
+				"          launch_date as string,",
+				"          price as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 derive(launch_date = trim(launch_date),",
+				"          price = trim(price)) ~> derivedColumn1",
+				"derivedColumn1 filter(!isNull(product_id) && !isNull(product_name) && !isNull(category_id) && !isNull(launch_date) && !isNull(price)) ~> filter1",
+				"filter1 derive(price = iif(\r",
+				"        instr(lower(toString(price)), 'one thousand') > 0, \r",
+				"        '1761', \r",
+				"        replace(replace(replace(toString(price), '$', ''), ',', ''), '.', '')\r",
+				"    ),",
+				"          launch_date = toString(     coalesce(         toDate(launch_date, 'yyyy-MM-dd'),         toDate(launch_date, 'dd/MM/yyyy'),         toDate(launch_date, 'MMM dd yyyy'),         toDate(launch_date, 'yyyy.MM.dd'),         toDate(launch_date, 'yyyy/MM/dd'),         toDate(launch_date, 'dd-MM-yyyy')     ),     'yyyy-MM-dd' )) ~> derivedColumn2",
+				"derivedColumn2 cast(output(",
+				"          launch_date as date,",
+				"          price as decimal(10,0)",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          product_id as string,",
+				"          product_name as string,",
+				"          category_id as string,",
+				"          launch_date as date,",
+				"          price as decimal(12,2)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          product_id,",
+				"          product_name,",
+				"          category_id,",
+				"          launch_date,",
+				"          price",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
