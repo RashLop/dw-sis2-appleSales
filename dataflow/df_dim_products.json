@@ -24,6 +24,10 @@
 			],
 			"sinks": [
 				{
+					"dataset": {
+						"referenceName": "ds_sql_dim_products",
+						"type": "DatasetReference"
+					},
 					"name": "sink1"
 				}
 			],
@@ -53,15 +57,40 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> Category",
-				"Products, Category join(product_id == Category@category_id,",
+				"Products, Category join(Products@category_id == Category@category_id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join1",
 				"join1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     input(",
+				"          product_sk as integer,",
+				"          product_id as string,",
+				"          product_name as string,",
+				"          price as decimal(12,2),",
+				"          category_id as string,",
+				"          category_name as string,",
+				"          extra_note as string,",
+				"          launch_date as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> sink1"
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          product_id,",
+				"          product_name,",
+				"          price,",
+				"          category_id = Category@category_id,",
+				"          category_name,",
+				"          extra_note,",
+				"          launch_date",
+				"     )) ~> sink1"
 			]
 		}
 	}
