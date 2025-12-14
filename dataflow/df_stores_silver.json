@@ -24,7 +24,14 @@
 					"name": "sink1"
 				}
 			],
-			"transformations": [],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          store_id as string,",
@@ -37,7 +44,13 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
-				"source1 sink(allowSchemaDrift: true,",
+				"source1 derive(store_name = iif(store_id == 'ST-9', replace(split(store_name, ',')[1], \"'\", \"\"), store_name),",
+				"          city = iif(store_id == 'ST-9', split(store_name, ',')[2], city),",
+				"          country = iif(store_id == 'ST-9', split(store_name, ',')[3], country),",
+				"          opened_year = iif(store_id == 'ST-9', split(store_name, ',')[4], opened_year)) ~> derivedColumn1",
+				"derivedColumn1 aggregate(groupBy(store_id),",
+				"     each(match(name!=\"store_id\"), $$ = first($$))) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          store_id as string,",
