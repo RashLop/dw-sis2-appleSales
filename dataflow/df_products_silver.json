@@ -29,9 +29,6 @@
 					"name": "derivedColumn1"
 				},
 				{
-					"name": "filter1"
-				},
-				{
 					"name": "derivedColumn2"
 				},
 				{
@@ -52,8 +49,7 @@
 				"     format: 'table') ~> source1",
 				"source1 derive(launch_date = trim(launch_date),",
 				"          price = trim(price)) ~> derivedColumn1",
-				"derivedColumn1 filter(!isNull(product_id) && !isNull(product_name) && !isNull(category_id) && !isNull(launch_date) && !isNull(price)) ~> filter1",
-				"filter1 derive(price = iif(\r",
+				"derivedColumn1 derive(price = iif(\r",
 				"        instr(lower(toString(price)), 'one thousand') > 0, \r",
 				"        '1761', \r",
 				"        replace(replace(replace(toString(price), '$', ''), ',', ''), '.', '')\r",
