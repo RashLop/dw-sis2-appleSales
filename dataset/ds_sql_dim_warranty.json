@@ -1,0 +1,37 @@
+{
+	"name": "ds_sql_dim_warranty",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sql_ucb_apple_12400475",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "warranty_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "claim_id",
+				"type": "varchar"
+			},
+			{
+				"name": "claim_date",
+				"type": "date"
+			},
+			{
+				"name": "repair_status",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_warranty"
+		}
+	}
+}
