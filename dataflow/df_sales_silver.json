@@ -30,9 +30,6 @@
 				},
 				{
 					"name": "cast1"
-				},
-				{
-					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -47,13 +44,12 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
-				"filter1 derive(sale_date = toString(     coalesce(         toDate(sale_date, 'yyyy-MM-dd'),         toDate(sale_date, 'dd/MM/yyyy'),         toDate(sale_date, 'MMM dd yyyy'),         toDate(sale_date, 'yyyy.MM.dd'),         toDate(sale_date, 'yyyy/MM/dd'),         toDate(sale_date, 'dd-MM-yyyy')     ),     'yyyy-MM-dd' )) ~> derivedColumn1",
+				"source1 derive(sale_date = toString(     coalesce(         toDate(sale_date, 'yyyy-MM-dd'),         toDate(sale_date, 'dd/MM/yyyy'),         toDate(sale_date, 'MMM dd yyyy'),         toDate(sale_date, 'yyyy.MM.dd'),         toDate(sale_date, 'yyyy/MM/dd'),         toDate(sale_date, 'dd-MM-yyyy')     ),     'yyyy-MM-dd' )) ~> derivedColumn1",
 				"derivedColumn1 cast(output(",
 				"          sale_date as date,",
 				"          quantity as integer",
 				"     ),",
 				"     errors: true) ~> cast1",
-				"source1 filter(!isNull(sale_id) && !isNull(sale_date) && !isNull(store_id) && !isNull(product_id) && !isNull(quantity)) ~> filter1",
 				"cast1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
