@@ -31,11 +31,6 @@
 				"precision": 10
 			},
 			{
-				"name": "warranty_sk",
-				"type": "int",
-				"precision": 10
-			},
-			{
 				"name": "sale_date",
 				"type": "date"
 			},

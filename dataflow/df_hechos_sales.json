@@ -27,25 +27,23 @@
 						"type": "DatasetReference"
 					},
 					"name": "products"
-				},
-				{
-					"dataset": {
-						"referenceName": "ds_sql_dim_warranty",
-						"type": "DatasetReference"
-					},
-					"name": "warranty"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_hechos_sales",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
 				},
 				{
 					"name": "join2"
-				},
-				{
-					"name": "join3"
 				}
 			],
 			"scriptLines": [
@@ -86,17 +84,6 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> products",
-				"source(output(",
-				"          warranty_sk as integer,",
-				"          claim_id as string,",
-				"          claim_date as date,",
-				"          repair_status as string,",
-				"          sale_id as string",
-				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> warranty",
 				"source1, stores join(source1@store_id == stores@store_id,",
 				"     joinType:'inner',",
 				"     matchType:'exact',",
@@ -107,11 +94,31 @@
 				"     matchType:'exact',",
 				"     ignoreSpaces: false,",
 				"     broadcast: 'auto')~> join2",
-				"join2, warranty join(source1@sale_id == ERROR_FUNCTION(''),",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join3"
+				"join2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          sale_sk as integer,",
+				"          sale_id as string,",
+				"          store_sk as integer,",
+				"          product_sk as integer,",
+				"          sale_date as date,",
+				"          quantity as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          sale_id,",
+				"          store_sk,",
+				"          product_sk,",
+				"          sale_date,",
+				"          quantity",
+				"     )) ~> sink1"
 			]
 		}
 	}
