@@ -22,7 +22,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": "delete from [gold].[dim_products]\ndelete from [gold].[dim_stores]\ndelete from [gold].[hechos_sales]"
+							"text": "delete from [gold].[dim_products]\ndelete from [gold].[dim_stores]\ndelete from [gold].[hechos_sales]\nDELETE FROM [gold].[dim_warranty]"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
@@ -122,6 +122,37 @@
 					},
 					"traceLevel": "Fine",
 					"continueOnError": true
+				}
+			},
+			{
+				"name": "Data flow4",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Data flow3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_hechos_sales",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
